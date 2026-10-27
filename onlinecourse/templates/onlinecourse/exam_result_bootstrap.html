@@ -59,7 +59,7 @@
             <div class="card mt-2">
                 <div class="card-header">
                     <h6 class="mb-0">
-                        {{ result.question.question_text }}
+                        {{ result.question.content }}
                         {% if result.got_score %}
                             <span class="badge badge-success">Correct &middot; +{{ result.question.grade }}</span>
                         {% else %}
@@ -70,13 +70,13 @@
                 <div class="card-body">
                     {% for item in result.choices %}
                         {% if item.selected and item.choice.is_correct %}
-                            <div class="text-success">&#10003; <b>{{ item.choice.choice_text }}</b> &ndash; Correct answer</div>
+                            <div class="text-success">&#10003; <b>{{ item.choice.content }}</b> &ndash; Correct answer</div>
                         {% elif item.selected %}
-                            <div class="text-danger">&#10007; <b>{{ item.choice.choice_text }}</b> &ndash; Wrong answer</div>
+                            <div class="text-danger">&#10007; <b>{{ item.choice.content }}</b> &ndash; Wrong answer</div>
                         {% elif item.choice.is_correct %}
-                            <div class="text-warning">&#9679; {{ item.choice.choice_text }} &ndash; Correct answer (not selected)</div>
+                            <div class="text-warning">&#9679; {{ item.choice.content }} &ndash; Correct answer (not selected)</div>
                         {% else %}
-                            <div class="text-muted">&#9675; {{ item.choice.choice_text }}</div>
+                            <div class="text-muted">&#9675; {{ item.choice.content }}</div>
                         {% endif %}
                     {% endfor %}
                 </div>

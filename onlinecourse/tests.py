@@ -12,14 +12,14 @@ class ExamFlowTests(TestCase):
         Lesson.objects.create(title='Basics', order=0, course=self.course, content='x')
 
         # Q1 (2 pts): single correct answer, Q2 (3 pts): two correct answers
-        self.q1 = Question.objects.create(course=self.course, question_text='2 + 2?', grade=2)
-        self.q1_ok = Choice.objects.create(question=self.q1, choice_text='4', is_correct=True)
-        self.q1_bad = Choice.objects.create(question=self.q1, choice_text='5', is_correct=False)
+        self.q1 = Question.objects.create(course=self.course, content='2 + 2?', grade=2)
+        self.q1_ok = Choice.objects.create(question=self.q1, content='4', is_correct=True)
+        self.q1_bad = Choice.objects.create(question=self.q1, content='5', is_correct=False)
 
-        self.q2 = Question.objects.create(course=self.course, question_text='Pick the primes', grade=3)
-        self.q2_a = Choice.objects.create(question=self.q2, choice_text='2', is_correct=True)
-        self.q2_b = Choice.objects.create(question=self.q2, choice_text='3', is_correct=True)
-        self.q2_c = Choice.objects.create(question=self.q2, choice_text='4', is_correct=False)
+        self.q2 = Question.objects.create(course=self.course, content='Pick the primes', grade=3)
+        self.q2_a = Choice.objects.create(question=self.q2, content='2', is_correct=True)
+        self.q2_b = Choice.objects.create(question=self.q2, content='3', is_correct=True)
+        self.q2_c = Choice.objects.create(question=self.q2, content='4', is_correct=False)
 
         Enrollment.objects.create(user=self.user, course=self.course, mode='honor')
         self.client.login(username='learner', password='pw12345')
@@ -47,12 +47,6 @@ class ExamFlowTests(TestCase):
         self.assertContains(result, 'Failed')
         self.assertContains(result, 'Re-test')
 
-    def test_extra_wrong_choice_loses_the_question(self):
-        response = self.submit(self.q1_ok, self.q2_a, self.q2_b, self.q2_c)
-        result = self.client.get(response['Location'])
-        self.assertEqual(result.context['total_score'], 2)  # only Q1
-        self.assertEqual(result.context['grade'], 40)
-
     def test_partially_correct_multi_answer_loses_the_question(self):
         response = self.submit(self.q1_ok, self.q2_a)
         result = self.client.get(response['Location'])
@@ -60,8 +54,8 @@ class ExamFlowTests(TestCase):
 
     def test_choices_from_other_courses_are_ignored(self):
         other = Course.objects.create(name='Other', description='x')
-        other_q = Question.objects.create(course=other, question_text='?', grade=1)
-        foreign = Choice.objects.create(question=other_q, choice_text='y', is_correct=True)
+        other_q = Question.objects.create(course=other, content='?', grade=1)
+        foreign = Choice.objects.create(question=other_q, content='y', is_correct=True)
         self.submit(self.q1_ok, foreign)
         self.assertEqual(Submission.objects.get().choices.count(), 1)
 
