@@ -95,11 +95,14 @@ class Enrollment(models.Model):
     rating = models.FloatField(default=5.0)
 
 
-# Question model: belongs to a lesson and carries the grade (points) it is worth
+# Question model: belongs to a course and carries the grade (points) it is worth
 class Question(models.Model):
-    lesson = models.ForeignKey(Lesson, on_delete=models.CASCADE)
-    question_text = models.CharField(max_length=500)
-    grade = models.IntegerField(default=1)
+    # Foreign key to course
+    course = models.ForeignKey(Course, on_delete=models.CASCADE)
+    # question text
+    question_text = models.CharField(max_length=200)
+    # question grade/mark
+    grade = models.IntegerField(default=50)
 
     def __str__(self):
         return "Question: " + self.question_text
@@ -119,7 +122,7 @@ class Question(models.Model):
 # Choice model: one possible answer of a question
 class Choice(models.Model):
     question = models.ForeignKey(Question, on_delete=models.CASCADE)
-    choice_text = models.CharField(max_length=500)
+    choice_text = models.CharField(max_length=200)
     is_correct = models.BooleanField(default=False)
 
     def __str__(self):

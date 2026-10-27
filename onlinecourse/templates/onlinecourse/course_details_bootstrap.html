@@ -61,24 +61,22 @@
                     <div id="exam" class="collapse mt-2">
                         <form id="questionform" action="{% url 'onlinecourse:submit' course.id %}" method="post">
                             {% csrf_token %}
-                            {% for lesson in course.lesson_set.all %}
-                                {% for question in lesson.question_set.all %}
-                                    <div class="card mt-1">
-                                        <div class="card-header">
-                                            <h5>{{ question.question_text }} <small class="text-muted">({{ question.grade }} pt{{ question.grade|pluralize }})</small></h5>
-                                        </div>
-                                        <div class="card-body">
-                                            {% for choice in question.choice_set.all %}
-                                                <div class="form-check">
-                                                    <label class="form-check-label">
-                                                        <input type="checkbox" class="form-check-input" name="choice_{{ choice.id }}" id="choice_{{ choice.id }}" value="{{ choice.id }}">
-                                                        {{ choice.choice_text }}
-                                                    </label>
-                                                </div>
-                                            {% endfor %}
-                                        </div>
+                            {% for question in course.question_set.all %}
+                                <div class="card mt-1">
+                                    <div class="card-header">
+                                        <h5>{{ question.question_text }} <small class="text-muted">({{ question.grade }} pt{{ question.grade|pluralize }})</small></h5>
                                     </div>
-                                {% endfor %}
+                                    <div class="card-body">
+                                        {% for choice in question.choice_set.all %}
+                                            <div class="form-check">
+                                                <label class="form-check-label">
+                                                    <input type="checkbox" class="form-check-input" name="choice_{{ choice.id }}" id="choice_{{ choice.id }}" value="{{ choice.id }}">
+                                                    {{ choice.choice_text }}
+                                                </label>
+                                            </div>
+                                        {% endfor %}
+                                    </div>
+                                </div>
                             {% endfor %}
                             <input class="btn btn-success mt-2" type="submit" value="Submit">
                         </form>

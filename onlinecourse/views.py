@@ -86,7 +86,7 @@ class CourseListView(generic.ListView):
 
 class CourseDetailView(generic.DetailView):
     model = Course
-    template_name = 'onlinecourse/course_detail_bootstrap.html'
+    template_name = 'onlinecourse/course_details_bootstrap.html'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -124,7 +124,7 @@ def submit(request, course_id):
     # only accept choices that belong to this course's exam
     selected_ids = extract_answers(request)
     submission.choices.set(
-        Choice.objects.filter(id__in=selected_ids, question__lesson__course=course)
+        Choice.objects.filter(id__in=selected_ids, question__course=course)
     )
 
     return HttpResponseRedirect(
@@ -149,13 +149,13 @@ def show_exam_result(request, course_id, submission_id):
     submission = get_object_or_404(Submission, pk=submission_id, enrollment__course=course)
 
     selected_ids = set(submission.choices.values_list('id', flat=True))
-    questions = Question.objects.filter(lesson__course=course).order_by('lesson__order', 'id')
+    questions = Question.objects.filter(course=course).order_by('id')
 
     total_score = 0
-    max_score = 0
+    possible = 0
     results = []
     for question in questions:
-        max_score += question.grade
+        possible += question.grade
         got_score = question.is_get_score(selected_ids)
         if got_score:
             total_score += question.grade
@@ -171,7 +171,7 @@ def show_exam_result(request, course_id, submission_id):
             ],
         })
 
-    grade = round(total_score / max_score * 100) if max_score else 0
+    grade = round(total_score / possible * 100) if possible else 0
 
     context = {
         'course': course,
@@ -179,7 +179,7 @@ def show_exam_result(request, course_id, submission_id):
         'selected_ids': selected_ids,
         'results': results,
         'total_score': total_score,
-        'max_score': max_score,
+        'possible': possible,
         'grade': grade,
     }
     return render(request, 'onlinecourse/exam_result_bootstrap.html', context)
