@@ -114,7 +114,7 @@ class Question(models.Model):
             return False
 
     def __str__(self):
-        return "Question: " + self.question_text
+        return self.question_text
 
 
 # Choice model
@@ -124,7 +124,7 @@ class Choice(models.Model):
     is_correct = models.BooleanField(default=False)
 
     def __str__(self):
-        return "Choice: " + self.choice_text
+        return self.choice_text
 
 
 # One enrollment could have multiple submission
