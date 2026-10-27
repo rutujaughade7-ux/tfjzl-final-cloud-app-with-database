@@ -39,16 +39,49 @@
     {% if grade > 80 %}
     <div class="alert alert-success">
        <!--HINT Display passed info -->
+       <b>Congratulations, {{ user.first_name|default:user.username }}!</b>
+       You have passed the exam and completed the course with a score of
+       {{ total_score }}/{{ max_score }} ({{ grade }}%).
     </div>
         {% else %}
         <div class="alert alert-danger">
             <!--HINT Display failed info -->
+            <b>Failed.</b> Sorry, {{ user.first_name|default:user.username }}!
+            You have failed the exam with a score of
+            {{ total_score }}/{{ max_score }} ({{ grade }}%).
         </div>
         <a class="btn btn-link text-danger" href="{% url 'onlinecourse:course_details' course.id %}">Re-test</a>
         {% endif %}
         <div class="card-columns-vertical mt-1">
         <h5 class="">Exam results</h5>
             <!--HINT Display exam results-->
+            {% for result in results %}
+            <div class="card mt-2">
+                <div class="card-header">
+                    <h6 class="mb-0">
+                        {{ result.question.question_text }}
+                        {% if result.got_score %}
+                            <span class="badge badge-success">Correct &middot; +{{ result.question.grade }}</span>
+                        {% else %}
+                            <span class="badge badge-danger">Incorrect &middot; 0/{{ result.question.grade }}</span>
+                        {% endif %}
+                    </h6>
+                </div>
+                <div class="card-body">
+                    {% for item in result.choices %}
+                        {% if item.selected and item.choice.is_correct %}
+                            <div class="text-success">&#10003; <b>{{ item.choice.choice_text }}</b> &ndash; Correct answer</div>
+                        {% elif item.selected %}
+                            <div class="text-danger">&#10007; <b>{{ item.choice.choice_text }}</b> &ndash; Wrong answer</div>
+                        {% elif item.choice.is_correct %}
+                            <div class="text-warning">&#9679; {{ item.choice.choice_text }} &ndash; Correct answer (not selected)</div>
+                        {% else %}
+                            <div class="text-muted">&#9675; {{ item.choice.choice_text }}</div>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+            {% endfor %}
         </div>
     </div>
 </body>
